@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود / ثبت‌نام</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Main container */
+        .main-container {
+            width: 800px;
+            height: 500px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            position: relative;
+        }
+
+        /* Left side - Forms */
+        .forms-container {
+            width: 50%;
+            background: #FFFFFF;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Tab navigation */
+        .tab-navigation {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button.active {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .tab-button:not(.active) {
+            color: #4CAF50;
+            background: white;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #388E3C;
+            color: white;
+        }
+
+        /* Form styles */
+        .form-container {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-group input.error {
+            border-color: #f44336;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .submit-btn:hover {
+            background: #388E3C;
+        }
+
+        .form-link {
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .form-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-link a:hover {
+            color: #388E3C;
+        }
+
+        /* Right side - Info */
+        .info-container {
+            width: 50%;
+            background: #4CAF50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .info-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 40px;
+        }
+
+        .info-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .info-description {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-container {
+                width: 100%;
+                height: auto;
+                flex-direction: column;
+                max-width: 400px;
+            }
+
+            .forms-container,
+            .info-container {
+                width: 100%;
+            }
+
+            .forms-container {
+                padding: 30px 20px;
+            }
+
+            .info-container {
+                padding: 30px 20px;
+            }
+
+            .info-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+
+            .info-title {
+                font-size: 20px;
+            }
+
+            .info-description {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Left side - Forms -->
+        <div class="forms-container">
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-button active" data-tab="login">ورود</button>
+                <button class="tab-button" data-tab="register">ثبت‌نام</button>
+            </div>
+
+            <!-- Login Form -->
+            <div class="form-container active" id="login-form">
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">ایمیل یا موبایل</label>
+                        <input type="text" id="login-email" name="email" required>
+                        <div class="error-message" id="login-email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">رمز عبور</label>
+                        <input type="password" id="login-password" name="password" required>
+                        <div class="error-message" id="login-password-error"></div>
+                    </div>
+                    <button type="submit" class="submit-btn">ورود</button>
+                    <div class="form-link">
+                        <a href="#" onclick="showForgotPassword()">فراموشی رمز عبور</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div class="form-container" id="register-form">
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="register-name">نام و نام خانوادگی</label>
+                        <input type="text" id="register-name" name="name" required>
+                        <div class="error-message" id="register-name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">ایمیل یا موبایل</label>
+                        <input type="text" id="register-email" name="email" required>
+                        <div class="error-message" id="register-email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">رمز عبور</label>
+                        <input type="password" id="register-password" name="password" required>
+                        <div class="error-message" id="register-password-error"></div>
+                    </div>
+                    <button type="submit" class="submit-btn">ثبت‌نام</button>
+                    <div class="form-link">
+                        <a href="#" onclick="switchToLogin()">حساب دارید؟ وارد شوید</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right side - Info -->
+        <div class="info-container">
+            <div class="info-icon">👋</div>
+            <h2 class="info-title">به جامعه ما بپیوندید</h2>
+            <p class="info-description">
+                با ثبت‌نام در پلتفرم ما، به هزاران کاربر دیگر بپیوندید و از خدمات متنوع ما بهره‌مند شوید.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Remove active class from all tabs and forms
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.form-container').forEach(form => form.classList.remove('active'));
+            
+            // Add active class to selected tab and form
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}-form`).classList.add('active');
+        }
+
+        // Event listeners for tab buttons
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                switchTab(tabName);
+            });
+        });
+
+        // Form validation functions
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const mobileRegex = /^09\d{9}$/;
+            return emailRegex.test(email) || mobileRegex.test(email);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+
+        function validateName(name) {
+            return name.length >= 2;
+        }
+
+        function showError(inputId, message) {
+            const input = document.getElementById(inputId);
+            const errorDiv = document.getElementById(`${inputId}-error`);
+            
+            input.classList.add('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function clearError(inputId) {
+            const input = document.getElementById(inputId);
+            const errorDiv = document.getElementById(`${inputId}-error`);
+            
+            input.classList.remove('error');
+            errorDiv.style.display = 'none';
+        }
+
+        // Login form handler
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            
+            // Clear previous errors
+            clearError('login-email');
+            clearError('login-password');
+            
+            let hasError = false;
+            
+            // Validate email/mobile
+            if (!email) {
+                showError('login-email', 'لطفاً ایمیل یا موبایل را وارد کنید');
+                hasError = true;
+            } else if (!validateEmail(email)) {
+                showError('login-email', 'لطفاً ایمیل یا موبایل معتبر وارد کنید');
+                hasError = true;
+            }
+            
+            // Validate password
+            if (!password) {
+                showError('login-password', 'لطفاً رمز عبور را وارد کنید');
+                hasError = true;
+            } else if (!validatePassword(password)) {
+                showError('login-password', 'رمز عبور باید حداقل 6 کاراکتر باشد');
+                hasError = true;
+            }
+            
+            if (!hasError) {
+                // Simulate login process
+                console.log('Login attempt:', { email, password });
+                alert('در حال ورود...');
+            }
+        }
+
+        // Register form handler
+        function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('register-name').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            
+            // Clear previous errors
+            clearError('register-name');
+            clearError('register-email');
+            clearError('register-password');
+            
+            let hasError = false;
+            
+            // Validate name
+            if (!name) {
+                showError('register-name', 'لطفاً نام و نام خانوادگی را وارد کنید');
+                hasError = true;
+            } else if (!validateName(name)) {
+                showError('register-name', 'نام باید حداقل 2 کاراکتر باشد');
+                hasError = true;
+            }
+            
+            // Validate email/mobile
+            if (!email) {
+                showError('register-email', 'لطفاً ایمیل یا موبایل را وارد کنید');
+                hasError = true;
+            } else if (!validateEmail(email)) {
+                showError('register-email', 'لطفاً ایمیل یا موبایل معتبر وارد کنید');
+                hasError = true;
+            }
+            
+            // Validate password
+            if (!password) {
+                showError('register-password', 'لطفاً رمز عبور را وارد کنید');
+                hasError = true;
+            } else if (!validatePassword(password)) {
+                showError('register-password', 'رمز عبور باید حداقل 6 کاراکتر باشد');
+                hasError = true;
+            }
+            
+            if (!hasError) {
+                // Simulate registration process
+                console.log('Register attempt:', { name, email, password });
+                alert('در حال ثبت‌نام...');
+            }
+        }
+
+        // Helper functions
+        function switchToLogin() {
+            switchTab('login');
+        }
+
+        function showForgotPassword() {
+            alert('لینک بازیابی رمز عبور به ایمیل شما ارسال خواهد شد');
+        }
+
+        // Real-time validation
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('blur', function() {
+                const inputId = this.id;
+                const value = this.value.trim();
+                
+                if (inputId.includes('email')) {
+                    if (value && !validateEmail(value)) {
+                        showError(inputId, 'لطفاً ایمیل یا موبایل معتبر وارد کنید');
+                    } else {
+                        clearError(inputId);
+                    }
+                } else if (inputId.includes('password')) {
+                    if (value && !validatePassword(value)) {
+                        showError(inputId, 'رمز عبور باید حداقل 6 کاراکتر باشد');
+                    } else {
+                        clearError(inputId);
+                    }
+                } else if (inputId.includes('name')) {
+                    if (value && !validateName(value)) {
+                        showError(inputId, 'نام باید حداقل 2 کاراکتر باشد');
+                    } else {
+                        clearError(inputId);
+                    }
+                }
+            });
+            
+            input.addEventListener('input', function() {
+                const inputId = this.id;
+                if (this.value.trim()) {
+                    clearError(inputId);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
