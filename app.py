@@ -19,10 +19,22 @@ app = Flask(__name__)
 
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-secret-key')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///app.db')
+
+# Database URL normalization for PostgreSQL and psycopg3 driver
+database_url = os.getenv('DATABASE_URL', 'sqlite:///app.db')
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+elif database_url.startswith('postgresql://'):
+    database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default-jwt-secret')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 1)))
+
+# reCAPTCHA configuration (disabled by default to keep local tests working)
+app.config['RECAPTCHA_ENABLED'] = os.getenv('RECAPTCHA_ENABLED', 'false').lower() in ('1', 'true', 'yes')
+app.config['RECAPTCHA_SITE_KEY'] = os.getenv('RECAPTCHA_SITE_KEY', '')
+app.config['RECAPTCHA_SECRET_KEY'] = os.getenv('RECAPTCHA_SECRET_KEY', '')
 
 # Initialize extensions
 db = SQLAlchemy(app)
@@ -43,7 +55,11 @@ app.register_blueprint(user_bp, url_prefix='/users')
 @app.route('/')
 def index():
     """Home page route"""
-    return render_template('index.html')
+    return render_template(
+        'index.html',
+        recaptcha_enabled=app.config.get('RECAPTCHA_ENABLED', False),
+        recaptcha_site_key=app.config.get('RECAPTCHA_SITE_KEY', '')
+    )
 
 @app.route('/api')
 def api_info():
