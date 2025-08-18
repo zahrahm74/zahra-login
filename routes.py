@@ -3,9 +3,10 @@ Application Routes
 Defines all API endpoints for authentication and user management.
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import re
+import requests
 
 def create_routes(db, User):
     """Create route blueprints"""
@@ -94,7 +95,8 @@ def create_routes(db, User):
         }
         """
         try:
-            data = request.get_json()
+            # Support JSON and form submissions
+            data = request.get_json(silent=True) or request.form.to_dict() or {}
             
             if not data:
                 return jsonify({'error': 'No data provided'}), 400
@@ -102,6 +104,29 @@ def create_routes(db, User):
             # Accept either username or email
             identifier = data.get('username') or data.get('email')
             password = data.get('password')
+
+            # Verify CAPTCHA if enabled
+            recaptcha_enabled = current_app.config.get('RECAPTCHA_ENABLED', False)
+            if recaptcha_enabled:
+                recaptcha_secret = current_app.config.get('RECAPTCHA_SECRET_KEY', '')
+                recaptcha_response = data.get('g-recaptcha-response') or request.headers.get('X-Recaptcha-Response')
+                if not recaptcha_response:
+                    return jsonify({'error': 'CAPTCHA verification required'}), 400
+                try:
+                    verify = requests.post(
+                        'https://www.google.com/recaptcha/api/siteverify',
+                        data={
+                            'secret': recaptcha_secret,
+                            'response': recaptcha_response,
+                            'remoteip': request.remote_addr
+                        },
+                        timeout=5
+                    )
+                    verify_json = verify.json()
+                except Exception:
+                    return jsonify({'error': 'CAPTCHA verification failed'}), 400
+                if not verify_json.get('success'):
+                    return jsonify({'error': 'CAPTCHA invalid'}), 400
             
             if not identifier or not password:
                 return jsonify({'error': 'Username/email and password are required'}), 400
